@@ -22,10 +22,4 @@ export class UsersController {
   logIn(@Body() data: LoginRequestDto) {
     return this.authService.jwtLogIn(data);
   }
-
-  @UseGuards(JwtAuthGuard)
-  @Get('test')
-  test(@LogInUser() user) {
-    return user.readOnlyData;
-  }
 }

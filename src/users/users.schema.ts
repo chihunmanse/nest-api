@@ -4,6 +4,7 @@ import { Document, SchemaOptions } from 'mongoose';
 
 const options: SchemaOptions = {
   timestamps: true,
+  versionKey: false,
 };
 
 @Schema(options)

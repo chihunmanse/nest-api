@@ -9,6 +9,8 @@ import { AuthModule } from './auth/auth.module';
 import { ProductsModule } from './products/products.module';
 import { CategoriesModule } from './categories/categories.module';
 import { CartsModule } from './carts/carts.module';
+import { ReviewsModule } from './reviews/reviews.module';
+import { ImageModule } from './image/image.module';
 import * as mongoose from 'mongoose';
 
 @Module({
@@ -23,6 +25,8 @@ import * as mongoose from 'mongoose';
     ProductsModule,
     CategoriesModule,
     CartsModule,
+    ReviewsModule,
+    ImageModule,
   ],
   controllers: [AppController],
   providers: [AppService],

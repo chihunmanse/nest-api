@@ -20,7 +20,7 @@ export class ProductsRepository {
     };
     const allProduct = await this.productModel
       .find()
-      .select(['-category', '-likeUsers'])
+      .select(['-category', '-likeUsers', '-reviews'])
       .skip(offset)
       .limit(limit)
       .sort(sortBy[sort]);
@@ -47,7 +47,7 @@ export class ProductsRepository {
         { name: new RegExp(search) },
         { 'category.name': new RegExp(search) },
       ])
-      .select(['-category', '-likeUsers'])
+      .select(['-category', '-likeUsers', '-reviews'])
       .skip(offset)
       .limit(limit)
       .sort(sortBy[sort]);
@@ -76,7 +76,7 @@ export class ProductsRepository {
     return result;
   }
 
-  async updateLikeUser(productId: string, userId: string): Promise<Product> {
+  async addLikeUser(productId: string, userId: string): Promise<Product> {
     const key = `likeUsers.${userId}`;
     const query = {};
     query[key] = true;

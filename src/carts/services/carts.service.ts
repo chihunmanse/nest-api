@@ -70,8 +70,11 @@ export class CartsService {
     return deleteItem;
   }
 
-  async getCart(userId: string): Promise<aggregateCartDto> {
+  async getCart(userId: string) {
     const cart = await this.cartsRepository.findCartByUser(userId);
+    if (!cart) {
+      return cart;
+    }
     const shipping = this.calculateShipping(cart.totalPrice);
     cart.shipping = shipping;
     cart.orderPrice = cart.totalPrice + shipping;

@@ -37,10 +37,7 @@ export class CartsRepository {
           },
         },
       },
-      {
-        new: true,
-        upsert: true,
-      },
+      { new: true, upsert: true },
     );
 
     return addItem;
@@ -158,6 +155,7 @@ export class CartsRepository {
       {
         $project: {
           'items.product.category': 0,
+          'items.product.likeUsers': 0,
         },
       },
       {

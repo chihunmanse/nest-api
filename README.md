@@ -26,6 +26,13 @@
 
 - GET /carts (장바구니 조회)
 
+- POST /products/reviews/:productId (리뷰 생성)
+
+- PUT /products/reviews/:reviewId (리뷰 수정)
+
+- DELETE /products/reviews/:reviewId (리뷰 삭제)
+
+- POST /image/upload (이미지 파일 업로드)
 
 
 # API DOCUMENT

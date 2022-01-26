@@ -20,7 +20,7 @@ export class ProductsService {
   async getOneProduct(id: string) {
     const isProductExist = await this.productsRepository.existsById(id);
 
-    if (!isProductExist) throw new BadRequestException('INVALID_PRODUCT_ID');
+    if (!isProductExist) throw new BadRequestException('PRODUCT_NOT_FOUND');
 
     const product = await this.productsRepository.findById(id);
     return product;
@@ -37,7 +37,7 @@ export class ProductsService {
     );
 
     if (!isLikeExist) {
-      const result = await this.productsRepository.updateLikeUser(
+      const result = await this.productsRepository.addLikeUser(
         productId,
         userId,
       );

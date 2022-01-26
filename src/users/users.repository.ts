@@ -15,7 +15,7 @@ export class UsersRepository {
     return result;
   }
 
-  async create(user: SignUpRequestDto): Promise<User> {
+  async createUser(user: SignUpRequestDto): Promise<User> {
     return await this.userModel.create(user);
   }
 

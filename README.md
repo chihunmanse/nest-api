@@ -4,6 +4,8 @@
 
 - POST /users/signin (로그인)
 
+- GET /users/reviews (작성 리뷰 조회)
+
 - GET /categories (전체 카테고리 조회)
 
 - GET /categories/:id (카테고리 조회)
@@ -27,6 +29,8 @@
 - GET /carts (장바구니 조회)
 
 - POST /products/reviews/:productId (리뷰 생성)
+
+- GET /products/reviews/:productId (리뷰 조회)
 
 - PUT /products/reviews/:reviewId (리뷰 수정)
 

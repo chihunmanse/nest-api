@@ -1,3 +1,4 @@
+import { ReviewsRepository } from './../../reviews/reviews.repository';
 import { AllProductRequestDto } from '../dto/allProduct.request.dto';
 import { ProductByKeywordRequestDto } from '../dto/productByKeyword.request.dto';
 import { Injectable, BadRequestException } from '@nestjs/common';
@@ -5,7 +6,10 @@ import { ProductsRepository } from '../products.repository';
 
 @Injectable()
 export class ProductsService {
-  constructor(private readonly productsRepository: ProductsRepository) {}
+  constructor(
+    private readonly productsRepository: ProductsRepository,
+    private readonly reviewsRepository: ReviewsRepository,
+  ) {}
 
   async getAllProduct(query: AllProductRequestDto) {
     const allProduct = await this.productsRepository.findAllProduct(query);
@@ -23,7 +27,9 @@ export class ProductsService {
     if (!isProductExist) throw new BadRequestException('PRODUCT_NOT_FOUND');
 
     const product = await this.productsRepository.findById(id);
-    return product;
+    const ratingAvg = await this.reviewsRepository.calculateRatingAvg(id);
+    const reviewCount = await this.reviewsRepository.countReview(id);
+    return { product, ratingAvg, reviewCount };
   }
 
   async updateLikeUser(productId: string, userId: string) {

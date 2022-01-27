@@ -22,8 +22,6 @@ export class ImageController {
     @LogInUser() user: User,
     @UploadedFile() image: Express.Multer.File,
   ) {
-    console.log(image);
-    console.log(image.originalname);
     return await this.imageService.uploadImageToS3(user._id, image);
   }
 }

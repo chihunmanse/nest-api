@@ -1,4 +1,3 @@
-import { aggregateCartDto } from './../dto/aggregate.cart.dto';
 import { ProductsRepository } from './../../products/products.repository';
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { CartsRepository } from '../carts.repository';

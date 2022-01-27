@@ -63,9 +63,6 @@ export class ReviewsRepository {
         _id: review.product,
       },
       { $push: { recentReviews: review } },
-      {
-        new: true,
-      },
     );
   }
 
@@ -112,9 +109,6 @@ export class ReviewsRepository {
       {
         $pull: { recentReviews: { _id: new Types.ObjectId(reviewId) } },
       },
-      {
-        new: true,
-      },
     );
   }
 
@@ -142,13 +136,14 @@ export class ReviewsRepository {
   async countReview(productId: string): Promise<number> {
     return await this.reviewModel.countDocuments({
       product: productId,
+      isDeleted: false,
     });
   }
 
   async calculateRatingAvg(productId: string): Promise<number> {
     const avgAggregation = await this.reviewModel.aggregate([
       {
-        $match: { product: productId },
+        $match: { product: productId, isDeleted: false },
       },
       {
         $group: {
@@ -174,7 +169,7 @@ export class ReviewsRepository {
       rating: '-rating',
     };
 
-    const filterQuery = { product: productId };
+    const filterQuery = { product: productId, isDeleted: false };
 
     if (rating) {
       filterQuery['rating'] = rating;
@@ -199,7 +194,7 @@ export class ReviewsRepository {
       rating: '-rating',
     };
 
-    const filterQuery = { author: userId };
+    const filterQuery = { author: userId, isDeleted: false };
 
     if (rating) {
       filterQuery['rating'] = rating;

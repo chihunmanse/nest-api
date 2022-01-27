@@ -2,7 +2,6 @@ import { ReviewDto } from './../dto/review.dto';
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { ReviewsRepository } from '../reviews.repository';
 import { ReviewRequestDto } from '../dto/review.request.dto';
-<<<<<<< HEAD
 import { ProductsRepository } from 'src/products/products.repository';
 import { ReviewQueryDto } from '../dto/reviewByProduct.request.dto';
 import { Types } from 'mongoose';
@@ -22,15 +21,6 @@ export class ReviewsService {
     if (!isProductExist)
       throw new BadRequestException('PRODUCT_DOES_NOT_EXIST');
 
-=======
-
-@Injectable()
-export class ReviewsService {
-  constructor(private readonly reviewsRepository: ReviewsRepository) {}
-
-  async createReview(reviewDto: ReviewDto) {
-    const { product } = reviewDto;
->>>>>>> 65b2fb6 ([Add] reviews)
     const review = await this.reviewsRepository.createReview(reviewDto);
 
     await this.reviewsRepository.addRecentReview(review);
@@ -70,7 +60,6 @@ export class ReviewsService {
     );
 
     if (!isReviewExist) throw new BadRequestException('REVIEW_DOES_NOT_EXIST');
-<<<<<<< HEAD
 
     await this.reviewsRepository.deleteRecentReview(reviewId);
     const deleteReview = await this.reviewsRepository.deleteReview(reviewId);
@@ -79,10 +68,11 @@ export class ReviewsService {
   }
 
   async getReviewByProduct(productId: string, query: ReviewQueryDto) {
-    const count = await this.reviewsRepository.countReview(productId);
-    const avg = await this.reviewsRepository.calculateRatingAvg(productId);
-    console.log(count);
-    console.log(avg);
+    const isProductExist = await this.productsRepository.existsById(productId);
+
+    if (!isProductExist)
+      throw new BadRequestException('PRODUCT_DOES_NOT_EXIST');
+
     return await this.reviewsRepository.findReviewByProduct(productId, query);
   }
 
@@ -91,7 +81,5 @@ export class ReviewsService {
     query: ReviewQueryDto,
   ) {
     return await this.reviewsRepository.findReviewByAuthor(userId, query);
-=======
->>>>>>> 65b2fb6 ([Add] reviews)
   }
 }

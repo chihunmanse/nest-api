@@ -63,9 +63,6 @@ export class ReviewsRepository {
         _id: review.product,
       },
       { $push: { recentReviews: review } },
-      {
-        new: true,
-      },
     );
   }
 
@@ -111,9 +108,6 @@ export class ReviewsRepository {
       },
       {
         $pull: { recentReviews: { _id: new Types.ObjectId(reviewId) } },
-      },
-      {
-        new: true,
       },
     );
   }

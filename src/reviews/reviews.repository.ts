@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Review } from './reviews.schema';
 import { ReviewRequestDto } from './dto/review.request.dto';
+import { ReviewQueryDto } from './dto/reviewByProduct.request.dto';
 
 @Injectable()
 export class ReviewsRepository {
@@ -61,7 +62,7 @@ export class ReviewsRepository {
       {
         _id: review.product,
       },
-      { $push: { reviews: review } },
+      { $push: { recentReviews: review } },
       {
         new: true,
       },
@@ -74,7 +75,7 @@ export class ReviewsRepository {
         _id: productId,
       },
       {
-        $pop: { reviews: -1 },
+        $pop: { recentReviews: -1 },
       },
     );
   }
@@ -82,7 +83,7 @@ export class ReviewsRepository {
   async updateRecentReview(review: Review): Promise<Product> {
     return await this.productModel.findOneAndUpdate(
       {
-        reviews: {
+        recentReviews: {
           $elemMatch: {
             _id: new Types.ObjectId(review._id),
             author: review.author,
@@ -90,7 +91,7 @@ export class ReviewsRepository {
         },
       },
       {
-        $set: { 'reviews.$[review]': review },
+        $set: { 'recentReviews.$[review]': review },
       },
       {
         arrayFilters: [{ 'review._id': new Types.ObjectId(review._id) }],
@@ -102,14 +103,14 @@ export class ReviewsRepository {
   async deleteRecentReview(reviewId: string) {
     return await this.productModel.updateOne(
       {
-        reviews: {
+        recentReviews: {
           $elemMatch: {
             _id: new Types.ObjectId(reviewId),
           },
         },
       },
       {
-        $pull: { reviews: { _id: new Types.ObjectId(reviewId) } },
+        $pull: { recentReviews: { _id: new Types.ObjectId(reviewId) } },
       },
       {
         new: true,
@@ -127,8 +128,8 @@ export class ReviewsRepository {
           _id: 0,
           reviewCount: {
             $cond: {
-              if: { $isArray: '$reviews' },
-              then: { $size: '$reviews' },
+              if: { $isArray: '$recentReviews' },
+              then: { $size: '$recentReviews' },
               else: 0,
             },
           },
@@ -136,5 +137,78 @@ export class ReviewsRepository {
       },
     ]);
     return countAggregation[0].reviewCount;
+  }
+
+  async countReview(productId: string): Promise<number> {
+    return await this.reviewModel.countDocuments({
+      product: productId,
+    });
+  }
+
+  async calculateRatingAvg(productId: string): Promise<number> {
+    const avgAggregation = await this.reviewModel.aggregate([
+      {
+        $match: { product: productId },
+      },
+      {
+        $group: {
+          _id: productId,
+          ratingAvg: { $avg: { $sum: '$rating' } },
+        },
+      },
+    ]);
+
+    if (avgAggregation.length === 0) {
+      return 0;
+    }
+
+    return avgAggregation[0].ratingAvg.toFixed(1);
+  }
+
+  async findReviewByProduct(productId: string, query: ReviewQueryDto) {
+    const { sort, offset = 0, limit = 10, rating } = query;
+
+    const sortBy = {
+      recent: '-createdAt',
+      old: 'createdAt',
+      rating: '-rating',
+    };
+
+    const filterQuery = { product: productId };
+
+    if (rating) {
+      filterQuery['rating'] = rating;
+    }
+
+    return await this.reviewModel
+      .find(filterQuery)
+      .skip(offset)
+      .limit(limit)
+      .sort(sortBy[sort]);
+  }
+
+  async findReviewByAuthor(
+    userId: string | Types.ObjectId,
+    query: ReviewQueryDto,
+  ) {
+    const { sort, offset = 0, limit = 10, rating } = query;
+
+    const sortBy = {
+      recent: '-createdAt',
+      old: 'createdAt',
+      rating: '-rating',
+    };
+
+    const filterQuery = { author: userId };
+
+    if (rating) {
+      filterQuery['rating'] = rating;
+    }
+
+    return await this.reviewModel
+      .find(filterQuery)
+      .skip(offset)
+      .limit(limit)
+      .sort(sortBy[sort]);
   }
 }

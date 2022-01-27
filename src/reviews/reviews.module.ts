@@ -1,6 +1,6 @@
 import { Product, ProductSchema } from 'src/products/products.schema';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { ReviewsController } from './controllers/reviews.controller';
 import { ReviewsService } from './services/reviews.service';
 import { Review, ReviewSchema } from './reviews.schema';
@@ -11,9 +11,10 @@ import { ProductsModule } from 'src/products/products.module';
   imports: [
     MongooseModule.forFeature([{ name: Review.name, schema: ReviewSchema }]),
     MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }]),
-    ProductsModule,
+    forwardRef(() => ProductsModule),
   ],
   controllers: [ReviewsController],
   providers: [ReviewsService, ReviewsRepository],
+  exports: [ReviewsService, ReviewsRepository],
 })
 export class ReviewsModule {}

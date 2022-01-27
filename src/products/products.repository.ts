@@ -20,7 +20,7 @@ export class ProductsRepository {
     };
     const allProduct = await this.productModel
       .find()
-      .select(['-category', '-likeUsers', '-reviews'])
+      .select(['-category', '-likeUsers', '-recentReviews'])
       .skip(offset)
       .limit(limit)
       .sort(sortBy[sort]);
@@ -47,7 +47,7 @@ export class ProductsRepository {
         { name: new RegExp(search) },
         { 'category.name': new RegExp(search) },
       ])
-      .select(['-category', '-likeUsers', '-reviews'])
+      .select(['-category', '-likeUsers', '-recentReviews'])
       .skip(offset)
       .limit(limit)
       .sort(sortBy[sort]);

@@ -52,7 +52,7 @@ export class Product extends Document {
   likeUsers: object;
 
   @Prop()
-  reviews: Review[];
+  recentReviews: Review[];
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
